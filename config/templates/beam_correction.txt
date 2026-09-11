@@ -1,0 +1,30 @@
+**TASK: Combine beam-decoded candidates into the corrected transcription.**
+**HARD RULES**
+1) Output the corrected text for ALL windows concatenated, with no separators between windows.
+2) Use PRIMARY (rank-1 baseline) as your starting point; modify only where other candidates clearly agree on a different form.
+3) Preserve punctuation, casing, and angle-bracketed tokens (e.g. <NO_CONTEXT>) exactly as they appear in candidates.
+4) Do NOT add or delete characters beyond what the candidates suggest.
+5) When unsure or garbled, copy PRIMARY verbatim.
+6) Output the corrected text ONLY. Do NOT echo "===", "Window N", dashes, or any list formatting.
+
+Examples (simplified, single window):
+Input candidates:
+- helo worl
+- hello world
+- hello worl
+PRIMARY: helo worl
+Output: hello world
+
+Input candidates:
+- roveel auth
+- roveel oath
+- roveel auth
+PRIMARY: roveel auth
+Output: roveel auth
+
+Your turn:
+
+<INPUT>
+{payload}
+<START_CORRECTION>
+<OUTPUT>

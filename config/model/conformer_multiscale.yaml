@@ -1,0 +1,22 @@
+# @package _global_
+
+module:
+  _target_: emg2qwerty.transcription.lightning.ConformerCTCModule
+  input_channels: 32
+  conv_channels: [128, 64, 64]
+  conv_kernels: [11, 3, 3]
+  conv_strides: [5, 2, 2]
+  hidden_dim: 256
+  num_layers: 6
+  num_heads: 16
+  ffn_dim: 1024
+  conv_kernel_size: 15
+  dropout_rate: 0.2
+  use_multiscale_frontend: true
+  multiscale_branch_kernels: [7, 11, 15]
+  multiscale_branch_channels: 48
+
+datamodule:
+  _target_: emg2qwerty.transcription.data.RawEMGDataModule
+  window_length: 8000
+  padding: [1800, 200]

@@ -1,0 +1,7 @@
+defaults:
+  - beam_corrector
+  - _self_
+
+# Optional robustness evaluation. Do not mix its metrics with the main filtered-target evaluation.
+datamodule:
+  filter_empty_targets: false

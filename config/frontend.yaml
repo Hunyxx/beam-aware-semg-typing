@@ -1,0 +1,47 @@
+defaults:
+  - user: generic
+  - transforms: raw_emg
+  - model: split_share_position_aux
+  - optimizer: adamw
+  - lr_scheduler: linear_warmup_cosine_annealing
+  - decoder: ctc_greedy
+  - cluster: local
+  - _self_
+
+# Frontend training protocol reported in Appendix A.1.
+seed: 1501
+batch_size: 320
+num_workers: 4
+train: true
+checkpoint: null
+resume_from_checkpoint: null
+monitor_metric: val/CER
+monitor_mode: min
+
+trainer:
+  accelerator: gpu
+  devices: 2
+  num_nodes: 1
+  max_epochs: 200
+  precision: bf16
+  gradient_clip_val: 1.0
+  default_root_dir: ${hydra:runtime.output_dir}
+
+callbacks:
+  - _target_: pytorch_lightning.callbacks.LearningRateMonitor
+  - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    dirpath: ${hydra:runtime.output_dir}/checkpoints
+    monitor: ${monitor_metric}
+    mode: ${monitor_mode}
+    save_last: true
+    verbose: true
+
+dataset:
+  root: ${oc.env:EMG2QWERTY_DATA_ROOT,${hydra:runtime.cwd}/data}
+
+hydra:
+  run:
+    dir: logs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  output_subdir: hydra_configs
+  job:
+    name: frontend

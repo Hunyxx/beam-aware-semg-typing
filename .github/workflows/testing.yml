@@ -1,0 +1,59 @@
+name: CPU validation
+
+on: [push, pull_request]
+
+jobs:
+  cpu-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pinned environment
+        uses: conda-incubator/setup-miniconda@v3.0.4
+        with:
+          auto-update-conda: true
+          miniconda-version: "latest"
+          activate-environment: semg-beam-aware-transcription
+          environment-file: environment.yml
+
+      - name: Verify runtime snapshot
+        shell: bash -el {0}
+        run: |
+          conda activate semg-beam-aware-transcription
+          python -m pip check
+          python -c "import torch, torchaudio, pytorch_lightning, transformers"
+
+      - name: Run pre-commit checks
+        shell: bash -el {0}
+        env:
+          SKIP: no-commit-to-branch
+        run: |
+          conda activate semg-beam-aware-transcription
+          pre-commit run --all-files
+
+      - name: Run frontend and inherited tests
+        shell: bash -el {0}
+        env:
+          CUDA_VISIBLE_DEVICES: ""
+          HF_HUB_OFFLINE: "1"
+          TRANSFORMERS_OFFLINE: "1"
+        run: |
+          conda activate semg-beam-aware-transcription
+          pytest -q -s -p no:cacheprovider \
+            emg2qwerty/tests \
+            --ignore=emg2qwerty/tests/beam_corrector_test.py \
+            scripts/analysis/tests/frontend_checkpoint_test.py
+
+      - name: Run corrector and analysis tests
+        shell: bash -el {0}
+        env:
+          CUDA_VISIBLE_DEVICES: ""
+          HF_HUB_OFFLINE: "1"
+          TRANSFORMERS_OFFLINE: "1"
+        run: |
+          conda activate semg-beam-aware-transcription
+          pytest -q -s -p no:cacheprovider \
+            emg2qwerty/tests/beam_corrector_test.py \
+            scripts/analysis/tests \
+            --ignore=scripts/analysis/tests/frontend_checkpoint_test.py

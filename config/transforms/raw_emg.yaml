@@ -1,0 +1,24 @@
+# @package _global_
+
+to_tensor_raw:
+  _target_: emg2qwerty.transcription.data.ToTensorRaw
+  fields: [emg_left, emg_right]
+
+band_rotation:
+  _target_: emg2qwerty.transforms.RandomBandRotation
+  offsets: [-1, 0, 1]
+  channel_dim: -1
+
+temporal_jitter:
+  _target_: emg2qwerty.transforms.TemporalAlignmentJitter
+  max_offset: 120
+  stack_dim: 1
+
+transforms:
+  train:
+    - ${to_tensor_raw}
+    - ${band_rotation}
+    - ${temporal_jitter}
+  val:
+    - ${to_tensor_raw}
+  test: ${transforms.val}

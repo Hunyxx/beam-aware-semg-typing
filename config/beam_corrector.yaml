@@ -1,0 +1,85 @@
+# Beam-aware Qwen training configuration.
+seed: 1501
+batch_size: 1
+num_workers: 4
+resume_from_checkpoint: null
+expected_global_batch_size: 8
+
+module:
+  _target_: emg2qwerty.transcription.beam_corrector.BeamAwareQwenModule
+  model_id: Qwen/Qwen3.5-9B
+  # Base model revision used for training.
+  base_model_revision: ${oc.env:SEMG_QWEN_REVISION,c202236235762e1c871ad0ccb60c8ee5ba337b9a}
+  learning_rate: 1.0e-4
+  weight_decay: 0.1
+  warmup_steps: 0
+  max_seq_length: 4096
+  max_new_tokens: 256
+  dtype: bf16
+  gradient_checkpointing: true
+  vocabulary_policy: text_only_beam_v1
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  lora_target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+  tokenizer_kwargs:
+    use_fast: true
+  model_loading_kwargs:
+    low_cpu_mem_usage: true
+  chat_template_kwargs:
+    enable_thinking: false
+  generation_kwargs:
+    do_sample: false
+    temperature: 0.0
+    top_p: 1.0
+    no_repeat_ngram_size: 0
+    repetition_penalty: 1.0
+  user_template_path: ${hydra:runtime.cwd}/config/templates/beam_correction.txt
+
+datamodule:
+  _target_: emg2qwerty.transcription.beam_dataset.BeamCorrectionDataModule
+  topk_root: ${oc.env:SEMG_BEAM_STANDARD_ROOT}
+  topk_root_degraded: ${oc.env:SEMG_BEAM_DEGRADED_ROOT}
+  topk_root_severely_degraded: ${oc.env:SEMG_BEAM_SEVERELY_DEGRADED_ROOT}
+  standard_ratio: 0.2
+  degraded_ratio: 0.3
+  severely_degraded_ratio: 0.5
+  # Not specified by the experiment report; record the actual held-out pool.
+  val_source: ${oc.env:SEMG_BEAM_VALIDATION_SOURCE}
+  chunk_size: 3
+  top_k: 10
+  filter_empty_targets: true
+  require_consecutive_windows: true
+  shuffle_candidates_train: true
+  batch_size: ${batch_size}
+  num_workers: ${num_workers}
+
+trainer:
+  accelerator: gpu
+  devices: 2
+  strategy: ddp_find_unused_parameters_false
+  max_epochs: 5
+  precision: bf16-mixed
+  # microbatch 1 x 2 processes x accumulation 4 = global batch 8
+  accumulate_grad_batches: 4
+  gradient_clip_val: 1.0
+  log_every_n_steps: 10
+
+callbacks:
+  - _target_: pytorch_lightning.callbacks.LearningRateMonitor
+    logging_interval: step
+  - _target_: pytorch_lightning.callbacks.ModelCheckpoint
+    dirpath: ${hydra:runtime.output_dir}/checkpoints
+    monitor: val/loss
+    mode: min
+    save_top_k: 1
+    save_last: true
+    save_weights_only: false
+    filename: beam-qwen-{epoch:02d}
+
+hydra:
+  run:
+    dir: outputs/beam_corrector/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  output_subdir: hydra_configs
+  job:
+    name: beam_corrector_qwen

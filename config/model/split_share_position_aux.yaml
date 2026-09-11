@@ -1,0 +1,30 @@
+# @package _global_
+
+module:
+  _target_: emg2qwerty.transcription.lightning.SplitShareConformerCTCModule
+  input_channels_per_hand: 16
+  conv_channels: [128, 64, 64]
+  conv_kernels: [11, 3, 3]
+  conv_strides: [5, 2, 2]
+  hidden_dim: 256
+  num_layers: 6
+  num_heads: 16
+  ffn_dim: 1024
+  conv_kernel_size: 15
+  dropout_rate: 0.2
+  use_multiscale_frontend: true
+  multiscale_branch_kernels: [7, 11, 15]
+  multiscale_branch_channels: 48
+  use_side_position_aux: true
+  position_weight: 0.29022504474034927
+  activity_weight: 0.012597707807099066
+
+datamodule:
+  _target_: emg2qwerty.transcription.data.SidePositionDataModule
+  window_length: 8000
+  padding: [1800, 200]
+  conv_kernels: [11, 3, 3]
+  conv_strides: [5, 2, 2]
+  position_label_window_radius: 6
+  position_label_time_shift: -0.02
+  position_activity_gaussian_sigma: 5.0

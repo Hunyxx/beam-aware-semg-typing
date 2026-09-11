@@ -1,0 +1,12 @@
+# conda env create -f environment.yml
+name: semg-beam-aware-transcription
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.19
+  - pip=25.3
+  - boost-cpp=1.84.0
+  - pip:
+      - -r requirements.txt
+      - -e .

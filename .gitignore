@@ -1,0 +1,73 @@
+# Swap files
+*.sw*
+
+# Backup files
+*~
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Mac
+.DS_Store
+
+# Build and Environments
+.condaenv
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+build
+dist
+*.egg-info
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter
+.ipynb_checkpoints
+
+# VSCode
+.vscode
+
+# PyCharm
+.idea
+
+# Hypothesis
+.hypothesis
+
+# Test and analysis caches
+.pytest_cache/
+.ruff_cache/
+.benchmarks/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+
+# Logs, checkpoints, and generated release artifacts
+logs/
+lightning_logs/
+outputs/
+artifacts/
+checkpoints/
+adapters/
+wandb/
+beam_exports/
+*.ckpt
+*.log
+*.tmp
+
+# Data
+data
+bids_data
+*.tar.gz
+
+# LM
+wikitext-103-raw*
