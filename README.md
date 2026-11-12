@@ -1,7 +1,15 @@
-# sEMG Typing Transcription with Conformer Encoding and Beam-Aware LLM Correction
+# sEMG Typing Transcription with Conformer Encoding and Beam-Aware Large Language Model Correction
 
-Code for **sEMG Typing Transcription with Conformer Encoding and Beam-Aware
-Large Language Model Correction**, by Yuanxi Wang, Lun Shu, and Yasuharu Koike.
+Official implementation of our **EMNLP 2026 Main Conference** paper.
+
+**Yuanxi Wang, Lun Shu, and Yasuharu Koike**
+
+Proceedings of the 2026 Conference on Empirical Methods in Natural Language
+Processing, pages 13763–13780, Budapest, Hungary, October 2026.
+
+[Paper](https://aclanthology.org/2026.emnlp-main.598/) ·
+[PDF](https://aclanthology.org/2026.emnlp-main.598.pdf) ·
+[DOI](https://doi.org/10.18653/2026.emnlp-main.598)
 
 The method transcribes surface electromyography (sEMG) recorded during typing
 in two stages:
@@ -150,11 +158,28 @@ Contribution instructions are in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Citation
 
+If you use this code or build on this work, please cite our paper using the
+official [ACL Anthology BibTeX](https://aclanthology.org/2026.emnlp-main.598.bib):
+
 ```bibtex
-@misc{wang_semg_transcription,
-  author = {Wang, Yuanxi and Shu, Lun and Koike, Yasuharu},
-  title = {sEMG Typing Transcription with Conformer Encoding and
-           Beam-Aware Large Language Model Correction}
+@inproceedings{wang-etal-2026-semg,
+    title = "s{EMG} Typing Transcription with Conformer Encoding and Beam-Aware Large Language Model Correction",
+    author = "Wang, Yuanxi  and
+      Shu, Lun  and
+      Koike, Yasuharu",
+    editor = "Lee, Hung-Yi  and
+      Dev, Sunipa  and
+      Li, Junyi Jessy  and
+      Elliott, Desmond",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing",
+    month = oct,
+    year = "2026",
+    address = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.emnlp-main.598/",
+    doi = "10.18653/2026.emnlp-main.598",
+    pages = "13763--13780",
+    ISBN = "979-8-89176-459-0"
 }
 ```
 
